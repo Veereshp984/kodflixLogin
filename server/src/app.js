@@ -104,8 +104,11 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-// 🔥 Serve React build
-app.use(express.static(path.join(__dirname, "../public")));
+// 🔥 IMPORTANT — Render-safe path
+const publicPath = path.join(process.cwd(), "public");
+
+// Serve React build
+app.use(express.static(publicPath));
 
 // API routes
 app.get("/api/health", (req, res) => {
@@ -114,12 +117,12 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 
-// 🔥 SPA fallback (React)
+// 🔥 SPA fallback
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public", "index.html"));
+  res.sendFile(path.join(publicPath, "index.html"));
 });
 
-// 🔥 Error handler MUST BE LAST
+// 🔥 Error handler LAST
 app.use(errorHandler);
 
 module.exports = app;
