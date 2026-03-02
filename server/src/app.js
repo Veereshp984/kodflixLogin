@@ -69,7 +69,7 @@ const errorHandler = require("./middlewares/errorHandler");
 
 const app = express();
 
-// CORS config
+// CORS
 const defaultOrigin = "http://localhost:5173";
 const configuredOrigin = (process.env.FRONTEND_URL || defaultOrigin)
   .trim()
@@ -104,7 +104,7 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-
+// 🔥 Serve React build
 app.use(express.static(path.join(__dirname, "../public")));
 
 // API routes
@@ -114,11 +114,12 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 
-app.use(errorHandler);
-
-
+// 🔥 SPA fallback (React)
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "../public", "index.html"));
 });
+
+// 🔥 Error handler MUST BE LAST
+app.use(errorHandler);
 
 module.exports = app;
